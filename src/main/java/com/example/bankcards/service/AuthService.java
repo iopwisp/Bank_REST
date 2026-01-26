@@ -3,6 +3,7 @@ package com.example.bankcards.service;
 import com.example.bankcards.dto.AuthDTO;
 import com.example.bankcards.entity.Role;
 import com.example.bankcards.entity.User;
+import com.example.bankcards.exception.ResourceAlreadyExistsException;
 import com.example.bankcards.repository.UserRepository;
 import com.example.bankcards.security.service.JwtService;
 import lombok.RequiredArgsConstructor;

@@ -4,6 +4,9 @@ import com.example.bankcards.dto.TransferDTO;
 import com.example.bankcards.entity.Card;
 import com.example.bankcards.entity.Transaction;
 import com.example.bankcards.entity.TransactionStatus;
+import com.example.bankcards.exception.InsufficientFundsException;
+import com.example.bankcards.exception.InvalidOperationException;
+import com.example.bankcards.exception.ResourceNotFoundException;
 import com.example.bankcards.repository.CardRepository;
 import com.example.bankcards.repository.TransactionRepository;
 import com.example.bankcards.security.service.EncryptionService;
@@ -29,7 +32,6 @@ public class TransferService {
         log.info("Processing transfer for user {}: {} to {}, amount: {}",
                 userId, request.getFromCardId(), request.getToCardId(), request.getAmount());
 
-        // Validate cards belong to user
         Card fromCard = cardRepository.findByIdAndUserId(request.getFromCardId(), userId)
                 .orElseThrow(() -> new ResourceNotFoundException("Source card not found"));
 
@@ -66,7 +68,7 @@ public class TransferService {
                 .fromCard(fromCard)
                 .toCard(toCard)
                 .amount(request.getAmount())
-                .status(TransactionStatus.COMPLETED)
+                .transactionStatus(TransactionStatus.COMPLETED)
                 .description(request.getDescription())
                 .build();
 

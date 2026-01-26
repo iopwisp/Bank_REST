@@ -5,6 +5,7 @@ import com.example.bankcards.entity.Card;
 import com.example.bankcards.entity.CardStatus;
 import com.example.bankcards.entity.User;
 import com.example.bankcards.exception.AccessDeniedException;
+import com.example.bankcards.exception.InvalidOperationException;
 import com.example.bankcards.exception.ResourceNotFoundException;
 import com.example.bankcards.repository.CardRepository;
 import com.example.bankcards.repository.UserRepository;
@@ -44,7 +45,7 @@ public class CardService {
         String cardNumber = generateCardNumber();
         String cvv = generateCVV();
 
-        Card card = Card.build()
+        Card card = Card.builder()
                 .cardNumber(encryptionService.encrypt(cardNumber))
                 .cardHolder(request.getCardHolder())
                 .expirationDate(LocalDate.now().plusYears(expirationYears))
