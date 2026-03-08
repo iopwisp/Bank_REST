@@ -31,7 +31,6 @@ spring:
     jwt:
       secret: ${JWT_SECRET}
       expiration: 86400000
-      refresh-expiration: 604800000
 
   servlet:
     multipart:
@@ -43,9 +42,6 @@ app:
     algorithm: AES/CBC/PKCS5Padding
 
   card:
-    transfer:
-      min-amount: 0.01
-      max-amount: 1000000.00
     expiration-years: 4
 
 logging:
