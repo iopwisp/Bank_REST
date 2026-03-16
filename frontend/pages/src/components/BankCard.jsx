@@ -1,116 +1,85 @@
+function fmtBalance(b) {
+  return b != null ? `${Number(b).toLocaleString("en-US", {minimumFractionDigits:2})} ₸` : "0.00 ₸";
+}
+function fmtExpiry(d) {
+  if (!d) return "MM/YY";
+  const dt = new Date(d);
+  return `${String(dt.getMonth()+1).padStart(2,"0")}/${String(dt.getFullYear()).slice(-2)}`;
+}
+
 const GRADIENTS = [
-  "linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%)",
-  "linear-gradient(135deg, #1c1c0e 0%, #2d2d00 50%, #1a3300 100%)",
-  "linear-gradient(135deg, #2d1b1b 0%, #3d1515 50%, #1a0a0a 100%)",
-  "linear-gradient(135deg, #0d1f2d 0%, #0a2540 50%, #051520 100%)",
+  "linear-gradient(135deg, #2d60ff 0%, #539bff 100%)",
+  "linear-gradient(135deg, #4c49ed 0%, #9795f9 100%)",
+  "linear-gradient(135deg, #16c784 0%, #39d98a 100%)",
+  "linear-gradient(135deg, #1e2a4a 0%, #3b4d80 100%)",
 ];
 
-function formatBalance(balance) {
-  return balance != null
-    ? `${Number(balance).toLocaleString("ru-RU")} ₸`
-    : "— ₸";
-}
-
-function formatExpiry(expirationDate) {
-  if (!expirationDate) return "MM/YY";
-  const d = new Date(expirationDate);
-  const mm = String(d.getMonth() + 1).padStart(2, "0");
-  const yy = String(d.getFullYear()).slice(-2);
-  return `${mm}/${yy}`;
-}
-
-export default function BankCard({ card, selected, onClick }) {
-  const gradient  = GRADIENTS[card.id % GRADIENTS.length] ?? GRADIENTS[0];
-  const isBlocked = card.status === "BLOCKED";
-  const isExpired = card.status === "EXPIRED";
-
-  // Backend returns maskedCardNumber: "**** **** **** 1234"
-  const masked = card.maskedCardNumber || "•••• •••• •••• ••••";
-
-  const statusLabel = isBlocked ? "ЗАБЛОКИРОВАНА" : isExpired ? "ИСТЕКЛА" : "АКТИВНА";
-  const statusBg    = isBlocked
-    ? "rgba(239,68,68,.2)"
-    : isExpired
-    ? "rgba(107,114,128,.2)"
-    : "rgba(34,197,94,.15)";
-  const statusColor = isBlocked ? "#ef4444" : isExpired ? "#9ca3af" : "#22c55e";
-  const statusBorder = isBlocked
-    ? "rgba(239,68,68,.3)"
-    : isExpired
-    ? "rgba(107,114,128,.3)"
-    : "rgba(34,197,94,.3)";
+export default function BankCard({ card, selected, onClick, compact=false }) {
+  const grad   = GRADIENTS[card.id % GRADIENTS.length] ?? GRADIENTS[0];
+  const blocked = card.status === "BLOCKED";
+  const expired = card.status === "EXPIRED";
+  const masked  = card.maskedCardNumber || "•••• •••• •••• ••••";
 
   return (
-    <div
-      onClick={onClick}
-      style={{
-        background:   gradient,
-        borderRadius: 20,
-        padding:      "28px 28px 24px",
-        cursor:       "pointer",
-        position:     "relative",
-        overflow:     "hidden",
-        border:       selected
-          ? "1px solid var(--gold)"
-          : "1px solid rgba(255,255,255,0.08)",
-        boxShadow:    selected
-          ? "0 0 0 2px var(--gold-glow), 0 20px 60px rgba(0,0,0,.5)"
-          : "0 8px 32px rgba(0,0,0,.4)",
-        transition:   "all .3s",
-        animation:    "fadeUp .4s ease both",
-        userSelect:   "none",
-        opacity:      isExpired ? 0.7 : 1,
-      }}
-      onMouseEnter={(e) => {
-        e.currentTarget.style.transform = "translateY(-4px) scale(1.01)";
-        e.currentTarget.style.boxShadow = "0 20px 60px rgba(0,0,0,.6)";
-      }}
-      onMouseLeave={(e) => {
-        e.currentTarget.style.transform = "";
-        e.currentTarget.style.boxShadow = selected
-          ? "0 0 0 2px var(--gold-glow), 0 20px 60px rgba(0,0,0,.5)"
-          : "0 8px 32px rgba(0,0,0,.4)";
-      }}
-    >
-      {/* shimmer */}
-      <div style={{ position:"absolute", inset:0, background:"linear-gradient(105deg, transparent 40%, rgba(255,255,255,0.04) 50%, transparent 60%)", pointerEvents:"none" }} />
+    <div onClick={onClick} style={{
+      background: grad, borderRadius:20, padding: compact?"22px 20px":"28px 26px",
+      cursor:"pointer", position:"relative", overflow:"hidden", userSelect:"none",
+      border: selected?"2px solid rgba(255,255,255,0.8)":"2px solid transparent",
+      boxShadow: selected?"0 8px 32px rgba(45,96,255,0.35)":"0 4px 20px rgba(45,96,255,0.2)",
+      transition:"all .25s", opacity: expired?0.7:1,
+      minWidth: compact?220:280,
+    }}
+      onMouseEnter={e=>{e.currentTarget.style.transform="translateY(-3px)";e.currentTarget.style.boxShadow="0 12px 40px rgba(45,96,255,0.3)";}}
+      onMouseLeave={e=>{e.currentTarget.style.transform="";e.currentTarget.style.boxShadow=selected?"0 8px 32px rgba(45,96,255,0.35)":"0 4px 20px rgba(45,96,255,0.2)";}}>
 
-      {/* chip */}
-      <div style={{ width:42, height:32, background:"linear-gradient(135deg, var(--gold), #8a6520)", borderRadius:6, marginBottom:24, position:"relative" }}>
-        <div style={{ position:"absolute", top:"30%", bottom:"30%", left:0, right:0, background:"rgba(0,0,0,.2)" }} />
-        <div style={{ position:"absolute", left:0, right:0, bottom:0, height:"30%", background:"rgba(0,0,0,.2)" }} />
+      {/* bg circles */}
+      <div style={{ position:"absolute", top:-30, right:-30, width:120, height:120,
+        borderRadius:"50%", background:"rgba(255,255,255,0.08)", pointerEvents:"none" }}/>
+      <div style={{ position:"absolute", bottom:-40, left:-10, width:140, height:140,
+        borderRadius:"50%", background:"rgba(255,255,255,0.05)", pointerEvents:"none" }}/>
+
+      {/* top row */}
+      <div style={{ display:"flex", justifyContent:"space-between", alignItems:"flex-start", marginBottom:compact?16:24 }}>
+        <div>
+          <div style={{ fontSize:11, color:"rgba(255,255,255,0.65)", letterSpacing:"0.06em", marginBottom:4 }}>BALANCE</div>
+          <div style={{ fontSize: compact?20:26, fontWeight:800, color:"#fff", letterSpacing:"-0.02em" }}>
+            {fmtBalance(card.balance)}
+          </div>
+        </div>
+        {/* chip icon */}
+        <div style={{ width:36, height:28, background:"linear-gradient(135deg,#f0d080,#c9a84c)",
+          borderRadius:6, position:"relative", flexShrink:0 }}>
+          <div style={{ position:"absolute", top:"30%", bottom:"30%", left:0, right:0, background:"rgba(0,0,0,.15)" }}/>
+          <div style={{ position:"absolute", bottom:0, left:0, right:0, height:"28%", background:"rgba(0,0,0,.1)" }}/>
+        </div>
       </div>
 
-      {/* masked number */}
-      <div style={{ fontFamily:"var(--font-mono)", fontSize:17, letterSpacing:"0.15em", color:"rgba(255,255,255,.9)", marginBottom:20 }}>
+      {/* card number */}
+      <div style={{ fontSize: compact?13:15, letterSpacing:"0.12em", color:"rgba(255,255,255,0.9)",
+        fontFamily:"'Courier New',monospace", marginBottom: compact?14:20 }}>
         {masked}
       </div>
 
       {/* bottom row */}
       <div style={{ display:"flex", justifyContent:"space-between", alignItems:"flex-end" }}>
         <div>
-          <div style={{ fontSize:10, color:"rgba(255,255,255,.4)", letterSpacing:"0.1em", marginBottom:2 }}>
-            {card.cardHolder || "ДЕРЖАТЕЛЬ"}
-          </div>
-          <div style={{ fontSize:10, color:"rgba(255,255,255,.35)", letterSpacing:"0.08em", marginBottom:6 }}>
-            ДО {formatExpiry(card.expirationDate)}
-          </div>
-          <div style={{ fontSize:22, fontFamily:"var(--font-display)", fontWeight:600, color:"rgba(255,255,255,.95)" }}>
-            {formatBalance(card.balance)}
-          </div>
+          <div style={{ fontSize:10, color:"rgba(255,255,255,0.55)", letterSpacing:"0.06em", marginBottom:2 }}>CARD HOLDER</div>
+          <div style={{ fontSize:13, fontWeight:600, color:"#fff" }}>{card.cardHolder || "—"}</div>
         </div>
-
         <div style={{ textAlign:"right" }}>
-          <span style={{ fontSize:11, padding:"4px 10px", borderRadius:20, background:statusBg, color:statusColor, border:`1px solid ${statusBorder}`, letterSpacing:"0.08em" }}>
-            {statusLabel}
-          </span>
+          <div style={{ fontSize:10, color:"rgba(255,255,255,0.55)", letterSpacing:"0.06em", marginBottom:2 }}>VALID THRU</div>
+          <div style={{ fontSize:13, fontWeight:600, color:"#fff" }}>{fmtExpiry(card.expirationDate)}</div>
         </div>
       </div>
 
-      {/* brand */}
-      <div style={{ position:"absolute", top:24, right:24, fontFamily:"var(--font-display)", fontSize:22, fontWeight:600, color:"rgba(255,255,255,.18)", letterSpacing:"0.04em" }}>
-        VAULT
-      </div>
+      {/* blocked overlay */}
+      {blocked && (
+        <div style={{ position:"absolute", inset:0, background:"rgba(0,0,0,0.45)", borderRadius:20,
+          display:"flex", alignItems:"center", justifyContent:"center" }}>
+          <span style={{ background:"rgba(244,67,108,0.9)", color:"#fff", fontSize:11,
+            padding:"5px 12px", borderRadius:20, fontWeight:700, letterSpacing:"0.08em" }}>BLOCKED</span>
+        </div>
+      )}
     </div>
   );
 }

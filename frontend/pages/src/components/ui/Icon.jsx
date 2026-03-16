@@ -1,31 +1,36 @@
 export const ICONS = {
+  dashboard:    "M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z M9 22V12h6v10",
   card:         "M2 5a2 2 0 012-2h16a2 2 0 012 2v14a2 2 0 01-2 2H4a2 2 0 01-2-2V5zm0 5h20",
+  transfer:     "M8 7h12m0 0l-4-4m4 4l-4 4M4 17h12m0 0l-4-4m4 4l-4 4",
+  transactions: "M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2",
+  accounts:     "M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z",
+  settings:     "M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z M15 12a3 3 0 11-6 0 3 3 0 016 0z",
+  user:         "M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2 M12 11a4 4 0 100-8 4 4 0 000 8z",
+  bell:         "M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9",
+  search:       "M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z",
   plus:         "M12 5v14M5 12h14",
-  send:         "M22 2L11 13M22 2L15 22l-4-9-9-4 20-7z",
-  lock:         "M17 11V7a5 5 0 00-10 0v4M5 11h14a2 2 0 012 2v7a2 2 0 01-2 2H5a2 2 0 01-2-2v-7a2 2 0 012-2z",
-  unlock:       "M11 11V7a4 4 0 018 0M5 11h14a2 2 0 012 2v7a2 2 0 01-2 2H5a2 2 0 01-2-2v-7a2 2 0 012-2z",
-  trash:        "M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6",
-  logout:       "M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4M16 17l5-5-5-5M21 12H9",
-  check:        "M20 6L9 17l-5-5",
+  logout:       "M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4 M16 17l5-5-5-5 M21 12H9",
+  lock:         "M17 11V7a5 5 0 00-10 0v4 M5 11h14a2 2 0 012 2v7a2 2 0 01-2 2H5a2 2 0 01-2-2v-7a2 2 0 012-2z",
+  unlock:       "M11 11V7a4 4 0 018 0 M5 11h14a2 2 0 012 2v7a2 2 0 01-2 2H5a2 2 0 01-2-2v-7a2 2 0 012-2z",
+  trash:        "M3 6h18 M8 6V4h8v2 M19 6l-1 14H6L5 6",
   x:            "M18 6L6 18M6 6l12 12",
-  refresh:      "M23 4v6h-6M1 20v-6h6M3.5 9a9 9 0 0114.83-3.36L23 10M1 14l4.64 4.36A9 9 0 0020.49 15",
-  user:         "M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2M12 11a4 4 0 100-8 4 4 0 000 8z",
+  check:        "M20 6L9 17l-5-5",
+  refresh:      "M23 4v6h-6 M1 20v-6h6 M3.5 9a9 9 0 0114.83-3.36L23 10 M1 14l4.64 4.36A9 9 0 0020.49 15",
+  arrowUp:      "M5 15l7-7 7 7",
+  arrowDown:    "M19 9l-7 7-7-7",
   chevronRight: "M9 18l6-6-6-6",
+  send:         "M22 2L11 13 M22 2L15 22l-4-9-9-4 20-7z",
+  eye:          "M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z M12 9a3 3 0 100 6 3 3 0 000-6z",
+  chip:         "M9 3H5a2 2 0 00-2 2v4 M9 21H5a2 2 0 01-2-2v-4 M15 3h4a2 2 0 012 2v4 M15 21h4a2 2 0 002-2v-4 M9 9h6v6H9z",
 };
 
-export default function Icon({ name, size = 20, color = "currentColor", strokeWidth = 2 }) {
+export default function Icon({ name, size = 20, color = "currentColor", strokeWidth = 1.8 }) {
+  const paths = (ICONS[name] || "").split(" M ").filter(Boolean);
+  const d = paths.map((p, i) => (i === 0 ? p : "M " + p)).join(" ");
   return (
-    <svg
-      width={size}
-      height={size}
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke={color}
-      strokeWidth={strokeWidth}
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <path d={ICONS[name]} />
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none"
+      stroke={color} strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round">
+      <path d={ICONS[name] || ""} />
     </svg>
   );
 }

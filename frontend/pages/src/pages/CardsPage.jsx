@@ -1,175 +1,126 @@
 import { useEffect, useState } from "react";
-import BankCard     from "../components/BankCard.jsx";
-import CardDetail   from "../components/CardDetail.jsx";
-import { Button, Icon, Input, Modal, Select, Spinner } from "../components/ui/index.js";
+import BankCard    from "../components/BankCard.jsx";
+import CardDetail  from "../components/CardDetail.jsx";
+import TopBar      from "../components/TopBar.jsx";
+import { Button, Icon, Input, Modal, Spinner } from "../components/ui/index.js";
 
-export default function CardsPage({
-  cards, page, loading, actionLoading,
-  isAdmin, userId,
-  onLoad, onCreate, onDelete, onBlock, onUnblock, onTransferFrom,
-}) {
-  const [selectedId,   setSelectedId]   = useState(null);
-  const [showCreate,   setShowCreate]   = useState(false);
-  const [createForm,   setCreateForm]   = useState({ cardHolder: "", userId: "", initialBalance: "0" });
-  const [createLoading,setCreateLoading]= useState(false);
-  const [createError,  setCreateError]  = useState("");
+export default function CardsPage({ cards, page, loading, actionLoading, isAdmin, userId, onLoad, onCreate, onDelete, onBlock, onUnblock, onTransferFrom }) {
+  const [selId,     setSelId]    = useState(null);
+  const [showCreate,setShow]     = useState(false);
+  const [cf,        setCf]       = useState({ cardHolder:"", userId:"", initialBalance:"0" });
+  const [cLoading,  setCL]       = useState(false);
+  const [cErr,      setCErr]     = useState("");
 
-  useEffect(() => { onLoad(0); }, []);
+  useEffect(()=>{ onLoad(0); },[]);
 
-  const selected = cards.find((c) => c.id === selectedId) ?? null;
+  const sel = cards.find(c=>c.id===selId)??null;
+  const setSF = k=>e=>setCf(f=>({...f,[k]:e.target.value}));
 
-  // ── handlers ──────────────────────────────────────────────────────────────
-  const handleDelete = async (id) => {
-    const res = await onDelete(id);
-    if (res.ok) setSelectedId(null);
-    return res;
+  const handleCreate = async()=>{
+    setCErr("");
+    if(!cf.cardHolder.trim()){setCErr("Card holder name required");return;}
+    if(!cf.userId){setCErr("User ID required");return;}
+    setCL(true);
+    const res=await onCreate({ cardHolder:cf.cardHolder.trim(), userId:Number(cf.userId), initialBalance:Number(cf.initialBalance)||0 });
+    setCL(false);
+    if(res.ok){setShow(false);setCf({cardHolder:"",userId:"",initialBalance:"0"});}
+    else setCErr(res.message);
   };
 
-  const handleCreate = async () => {
-    setCreateError("");
-    if (!createForm.cardHolder.trim()) { setCreateError("Укажите имя держателя карты"); return; }
-    if (!createForm.userId)            { setCreateError("Укажите ID пользователя");     return; }
+  const statusColor = s => s==="ACTIVE"?"var(--success)":s==="BLOCKED"?"var(--danger)":"var(--text-3)";
+  const statusBg    = s => s==="ACTIVE"?"var(--success-lt)":s==="BLOCKED"?"var(--danger-lt)":"var(--bg)";
 
-    setCreateLoading(true);
-    const res = await onCreate({
-      cardHolder:     createForm.cardHolder.trim(),
-      userId:         Number(createForm.userId),
-      initialBalance: Number(createForm.initialBalance) || 0,
-    });
-    setCreateLoading(false);
-    if (res.ok) {
-      setShowCreate(false);
-      setCreateForm({ cardHolder:"", userId:"", initialBalance:"0" });
-    } else {
-      setCreateError(res.message);
-    }
-  };
-
-  const setCreate = (k) => (e) => setCreateForm((f) => ({ ...f, [k]: e.target.value }));
-
-  // ── render ──────────────────────────────────────────────────────────────
   return (
     <div style={{ animation:"fadeUp .4s ease" }}>
-      {/* Header */}
-      <div style={{ display:"flex", alignItems:"flex-start", justifyContent:"space-between", marginBottom:32, flexWrap:"wrap", gap:12 }}>
-        <div>
-          <h2 style={{ fontFamily:"var(--font-display)", fontSize:32, fontWeight:400, color:"var(--text)" }}>Мои карты</h2>
-          <p style={{ color:"var(--muted)", fontSize:12, marginTop:4 }}>
-            {page.totalElements} {pluralCards(page.totalElements)} · страница {page.number + 1} из {page.totalPages}
-          </p>
-        </div>
+      <TopBar title="My Cards" subtitle={`${page.totalElements} card${page.totalElements!==1?"s":""} total`}/>
 
-        <div style={{ display:"flex", gap:10, flexWrap:"wrap" }}>
-          <Button variant="ghost" icon={<Icon name="refresh" size={15} />} onClick={() => onLoad(page.number)} loading={loading}>
-            Обновить
-          </Button>
-          {/* Create card — admin only */}
-          {isAdmin && (
-            <Button icon={<Icon name="plus" size={15} />} onClick={() => setShowCreate(true)}>
-              Выпустить карту
-            </Button>
-          )}
+      {/* Controls */}
+      <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between", marginBottom:24, gap:12, flexWrap:"wrap" }}>
+        <div style={{ display:"flex", gap:8 }}>
+          {["ALL","ACTIVE","BLOCKED"].map(f=>(
+            <button key={f} style={{ padding:"7px 16px", borderRadius:10, border:"1.5px solid var(--border)",
+              background:"#fff", fontSize:12, fontWeight:600, cursor:"pointer",
+              color:"var(--text-2)", fontFamily:"var(--font)" }}>
+              {f}
+            </button>
+          ))}
+        </div>
+        <div style={{ display:"flex", gap:10 }}>
+          <Button variant="soft" icon={<Icon name="refresh" size={15}/>} loading={loading} onClick={()=>onLoad(page.number)}>Refresh</Button>
+          {isAdmin && <Button icon={<Icon name="plus" size={15}/>} onClick={()=>setShow(true)}>Issue Card</Button>}
         </div>
       </div>
 
-      {/* Admin hint for non-admins */}
       {!isAdmin && (
-        <div style={{ background:"rgba(201,168,76,.05)", border:"1px solid rgba(201,168,76,.15)", borderRadius:12, padding:"10px 16px", marginBottom:24, fontSize:12, color:"var(--muted)" }}>
-          💡 Выпуск и удаление карт доступны только администратору.
+        <div style={{ background:"var(--primary-lt)", border:"1.5px solid rgba(45,96,255,.15)",
+          borderRadius:12, padding:"10px 16px", marginBottom:20, fontSize:13, color:"var(--primary)", fontWeight:500 }}>
+          💡 Card issuance and deletion require Admin privileges.
         </div>
       )}
 
-      {/* Cards grid */}
-      {loading && cards.length === 0 ? (
-        <div style={{ display:"flex", justifyContent:"center", padding:80 }}><Spinner size={32} /></div>
-      ) : cards.length === 0 ? (
-        <EmptyState isAdmin={isAdmin} onCreateClick={() => setShowCreate(true)} />
+      {/* Grid */}
+      {loading && cards.length===0 ? (
+        <div style={{ display:"flex", justifyContent:"center", padding:80 }}><Spinner size={32}/></div>
+      ) : cards.length===0 ? (
+        <div style={{ textAlign:"center", padding:"60px 0", color:"var(--text-3)" }}>
+          <Icon name="card" size={48} color="var(--border2)"/>
+          <p style={{ marginTop:12, fontSize:15, fontWeight:500 }}>No cards found</p>
+        </div>
       ) : (
-        <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fill, minmax(300px, 1fr))", gap:20, marginBottom:28 }}>
-          {cards.map((card, i) => (
-            <div key={card.id} style={{ animationDelay:`${i * 0.07}s` }}>
-              <BankCard
-                card={card}
-                selected={selectedId === card.id}
-                onClick={() => setSelectedId(selectedId === card.id ? null : card.id)}
-              />
+        <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fill,minmax(280px,1fr))", gap:20, marginBottom:24 }}>
+          {cards.map((card,i)=>(
+            <div key={card.id} style={{ animationDelay:`${i*.06}s` }}>
+              <BankCard card={card} selected={selId===card.id} onClick={()=>setSelId(selId===card.id?null:card.id)}/>
+              {/* status badge below card */}
+              <div style={{ display:"flex", justifyContent:"space-between", marginTop:10, padding:"0 4px" }}>
+                <span style={{ fontSize:12, fontWeight:600, color:statusColor(card.status),
+                  background:statusBg(card.status), padding:"3px 10px", borderRadius:20 }}>
+                  {card.status}
+                </span>
+                <span style={{ fontSize:12, color:"var(--text-3)", fontWeight:500 }}>
+                  #{card.id}
+                </span>
+              </div>
             </div>
           ))}
         </div>
       )}
 
       {/* Pagination */}
-      {page.totalPages > 1 && (
-        <div style={{ display:"flex", gap:8, justifyContent:"center", marginBottom:24 }}>
-          <Button variant="ghost" disabled={page.number === 0} onClick={() => onLoad(page.number - 1)}>←</Button>
-          {Array.from({ length: page.totalPages }, (_, i) => (
-            <Button key={i} variant={i === page.number ? "primary" : "ghost"} onClick={() => onLoad(i)} style={{ minWidth:40, padding:"11px 0" }}>
-              {i + 1}
-            </Button>
+      {page.totalPages>1 && (
+        <div style={{ display:"flex", gap:6, justifyContent:"center", marginBottom:24 }}>
+          <Button variant="soft" disabled={page.number===0} onClick={()=>onLoad(page.number-1)} style={{ padding:"9px 14px" }}>‹</Button>
+          {Array.from({length:page.totalPages},(_,i)=>(
+            <Button key={i} variant={i===page.number?"primary":"soft"} onClick={()=>onLoad(i)} style={{ padding:"9px 14px" }}>{i+1}</Button>
           ))}
-          <Button variant="ghost" disabled={page.number >= page.totalPages - 1} onClick={() => onLoad(page.number + 1)}>→</Button>
+          <Button variant="soft" disabled={page.number>=page.totalPages-1} onClick={()=>onLoad(page.number+1)} style={{ padding:"9px 14px" }}>›</Button>
         </div>
       )}
 
-      {/* Detail panel */}
-      {selected && (
-        <CardDetail
-          card={selected}
-          actionLoading={actionLoading}
-          isAdmin={isAdmin}
-          onBlock={onBlock}
-          onUnblock={(id) => onUnblock(id)}
-          onDelete={handleDelete}
-          onTransfer={(id) => onTransferFrom(id)}
-          onClose={() => setSelectedId(null)}
-        />
+      {sel && (
+        <CardDetail card={sel} actionLoading={actionLoading} isAdmin={isAdmin}
+          onBlock={onBlock} onUnblock={onUnblock}
+          onDelete={async id=>{ const r=await onDelete(id); if(r.ok)setSelId(null); return r; }}
+          onTransfer={id=>{onTransferFrom(id);}}
+          onClose={()=>setSelId(null)}/>
       )}
 
-      {/* Create card modal — admin only */}
       {showCreate && (
-        <Modal title="Выпустить карту" onClose={() => { setShowCreate(false); setCreateError(""); }}>
-          <p style={{ color:"var(--muted)", fontSize:12, marginBottom:20, lineHeight:1.6 }}>
-            Только администратор может создавать карты. Укажите держателя и ID пользователя.
+        <Modal title="Issue New Card" onClose={()=>{setShow(false);setCErr("");}}>
+          <p style={{ color:"var(--text-2)", fontSize:13, marginBottom:20, lineHeight:1.6 }}>
+            Admin only. Specify the card holder name and user account ID.
           </p>
-
-          <Input label="Имя держателя *" placeholder="IVAN IVANOV" value={createForm.cardHolder} onChange={setCreate("cardHolder")} />
-          <Input label="ID пользователя *" type="number" placeholder="1" value={createForm.userId} onChange={setCreate("userId")} />
-          <Input label="Начальный баланс (₸)" type="number" placeholder="0.00" min="0" value={createForm.initialBalance} onChange={setCreate("initialBalance")} />
-
-          {createError && (
-            <div style={{ fontSize:12, color:"var(--danger)", padding:"8px 12px", background:"rgba(239,68,68,.08)", border:"1px solid rgba(239,68,68,.2)", borderRadius:8, marginBottom:14 }}>
-              {createError}
-            </div>
-          )}
-
+          <Input label="Card Holder Name *" placeholder="IVAN IVANOV" value={cf.cardHolder} onChange={setSF("cardHolder")}/>
+          <Input label="User ID *" type="number" placeholder="1" value={cf.userId} onChange={setSF("userId")}/>
+          <Input label="Initial Balance ($)" type="number" placeholder="0.00" min="0" value={cf.initialBalance} onChange={setSF("initialBalance")}/>
+          {cErr && <div style={{ fontSize:13, color:"var(--danger)", padding:"10px 12px",
+            background:"var(--danger-lt)", borderRadius:8, marginBottom:14 }}>{cErr}</div>}
           <div style={{ display:"flex", gap:10, marginTop:4 }}>
-            <Button variant="ghost" style={{ flex:1 }} onClick={() => { setShowCreate(false); setCreateError(""); }}>Отмена</Button>
-            <Button style={{ flex:1 }} icon={<Icon name="card" size={15} />} loading={createLoading} onClick={handleCreate}>Выпустить</Button>
+            <Button variant="soft" style={{ flex:1 }} onClick={()=>{setShow(false);setCErr("");}}>Cancel</Button>
+            <Button style={{ flex:1 }} icon={<Icon name="card" size={15}/>} loading={cLoading} onClick={handleCreate}>Issue Card</Button>
           </div>
         </Modal>
       )}
     </div>
   );
-}
-
-function EmptyState({ isAdmin, onCreateClick }) {
-  return (
-    <div style={{ textAlign:"center", padding:"80px 0", color:"var(--muted)" }}>
-      <div style={{ marginBottom:12 }}><Icon name="card" size={48} color="rgba(255,255,255,.08)" /></div>
-      <p style={{ fontSize:14, marginBottom:isAdmin ? 20 : 0 }}>
-        {isAdmin ? "Нет карт. Выпустите первую!" : "Карты отсутствуют."}
-      </p>
-      {isAdmin && (
-        <Button icon={<Icon name="plus" size={15} />} onClick={onCreateClick} style={{ margin:"0 auto" }}>
-          Выпустить карту
-        </Button>
-      )}
-    </div>
-  );
-}
-
-function pluralCards(n) {
-  if (n === 1) return "карта";
-  if (n >= 2 && n <= 4) return "карты";
-  return "карт";
 }
