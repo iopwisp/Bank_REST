@@ -1,8 +1,8 @@
 -------------------------------------------------------------------------------
 Test set: com.example.bankcards.controller.TransferServiceTest
 -------------------------------------------------------------------------------
-Tests run: 5, Failures: 0, Errors: 5, Skipped: 0, Time elapsed: 1.552 s <<< FAILURE! -- in com.example.bankcards.controller.TransferServiceTest
-com.example.bankcards.controller.TransferServiceTest.testTransferToNonExistentCard -- Time elapsed: 1.353 s <<< ERROR!
+Tests run: 5, Failures: 0, Errors: 5, Skipped: 0, Time elapsed: 1.673 s <<< FAILURE! -- in com.example.bankcards.controller.TransferServiceTest
+com.example.bankcards.controller.TransferServiceTest.testTransferToNonExistentCard -- Time elapsed: 1.483 s <<< ERROR!
 org.mockito.exceptions.base.MockitoException: 
 
 Mockito cannot mock this class: class com.example.bankcards.security.service.EncryptionService.
@@ -83,7 +83,7 @@ Caused by: java.lang.IllegalArgumentException: Java 23 (67) is not supported by 
 	at org.mockito.internal.creation.bytebuddy.InlineBytecodeGenerator.triggerRetransformation(InlineBytecodeGenerator.java:281)
 	... 27 more
 
-com.example.bankcards.controller.TransferServiceTest.testInsufficientFunds -- Time elapsed: 0.029 s <<< ERROR!
+com.example.bankcards.controller.TransferServiceTest.testInsufficientFunds -- Time elapsed: 0.032 s <<< ERROR!
 org.mockito.exceptions.base.MockitoException: 
 
 Mockito cannot mock this class: class com.example.bankcards.security.service.EncryptionService.
@@ -164,7 +164,7 @@ Caused by: java.lang.IllegalArgumentException: Java 23 (67) is not supported by 
 	at org.mockito.internal.creation.bytebuddy.InlineBytecodeGenerator.triggerRetransformation(InlineBytecodeGenerator.java:281)
 	... 27 more
 
-com.example.bankcards.controller.TransferServiceTest.testSuccessfulTransfer -- Time elapsed: 0.031 s <<< ERROR!
+com.example.bankcards.controller.TransferServiceTest.testSuccessfulTransfer -- Time elapsed: 0.028 s <<< ERROR!
 org.mockito.exceptions.base.MockitoException: 
 
 Mockito cannot mock this class: class com.example.bankcards.security.service.EncryptionService.
@@ -245,7 +245,7 @@ Caused by: java.lang.IllegalArgumentException: Java 23 (67) is not supported by 
 	at org.mockito.internal.creation.bytebuddy.InlineBytecodeGenerator.triggerRetransformation(InlineBytecodeGenerator.java:281)
 	... 27 more
 
-com.example.bankcards.controller.TransferServiceTest.testTransferFromBlockedCard -- Time elapsed: 0.033 s <<< ERROR!
+com.example.bankcards.controller.TransferServiceTest.testTransferFromBlockedCard -- Time elapsed: 0.031 s <<< ERROR!
 org.mockito.exceptions.base.MockitoException: 
 
 Mockito cannot mock this class: class com.example.bankcards.security.service.EncryptionService.
@@ -326,7 +326,7 @@ Caused by: java.lang.IllegalArgumentException: Java 23 (67) is not supported by 
 	at org.mockito.internal.creation.bytebuddy.InlineBytecodeGenerator.triggerRetransformation(InlineBytecodeGenerator.java:281)
 	... 27 more
 
-com.example.bankcards.controller.TransferServiceTest.testTransferToSameCard -- Time elapsed: 0.031 s <<< ERROR!
+com.example.bankcards.controller.TransferServiceTest.testTransferToSameCard -- Time elapsed: 0.030 s <<< ERROR!
 org.mockito.exceptions.base.MockitoException: 
 
 Mockito cannot mock this class: class com.example.bankcards.security.service.EncryptionService.

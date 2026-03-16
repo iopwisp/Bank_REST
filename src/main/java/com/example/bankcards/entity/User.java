@@ -2,12 +2,15 @@ package com.example.bankcards.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
-import org.hibernate.validator.internal.util.stereotypes.Lazy;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import java.time.LocalDateTime;
+import java.util.Collection;
 import java.util.HashSet;
-import java.util.LinkedHashSet;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Getter
 @Setter
@@ -15,8 +18,8 @@ import java.util.Set;
 @AllArgsConstructor
 @Entity
 @Builder
-@Table(name = "user")
-public class User {
+@Table(name = "bank_users")
+public class User implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
@@ -81,6 +84,13 @@ public class User {
 
     public boolean isEnabled() {
         return isActive;
+    }
+
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return roles.stream()
+                .map(role -> role.startsWith("ROLE_") ? role : "ROLE_" + role)
+                .map(SimpleGrantedAuthority::new)
+                .collect(Collectors.toSet());
     }
 
 }
