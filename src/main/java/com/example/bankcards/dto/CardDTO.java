@@ -18,7 +18,6 @@ public class CardDTO {
         @NotBlank(message = "Card holder name is required")
         private String cardHolder;
 
-        @NotNull(message = "User ID is required")
         private Long userId;
 
         @DecimalMin(value = "0.0", message = "Initial balance must be non-negative")

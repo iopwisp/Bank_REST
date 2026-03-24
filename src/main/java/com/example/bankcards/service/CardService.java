@@ -36,7 +36,7 @@ public class CardService {
     private final SecureRandom random = new SecureRandom();
 
     @Transactional
-    public CardDTO.Response createCard(CardDTO.CreateRequest request) {
+    public CardDTO.Response createCard(CardDTO.CreateRequest request, Long targetUserId) {
         log.info("Creating card for user: {}", request.getUserId());
 
         User user = userRepository.findById(request.getUserId())

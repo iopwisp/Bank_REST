@@ -43,12 +43,13 @@ public class CardController {
     }
 
     @PostMapping
-    @PreAuthorize("hasRole('ADMIN')")
-    @Operation(summary = "Create card", description = "Creates a new card (Admin only)")
-    public ResponseEntity<CardDTO.Response> createCard(
-            @Valid @RequestBody CardDTO.CreateRequest request) {
+    @Operation(summary = "Connect card", description = "Connects a new card for authenticated user; admin can specify any userId")    public ResponseEntity<CardDTO.Response> createCard(
+            @Valid @RequestBody CardDTO.CreateRequest request,
+            @AuthenticationPrincipal User user) {
+        boolean isAdmin = user.getRoles().contains(String.valueOf(Role.ADMIN));
+        Long targetUserId = isAdmin && request.getUserId() != null ? request.getUserId() : user.getId();
         return ResponseEntity.status(HttpStatus.CREATED)
-                .body(cardService.createCard(request));
+                .body(cardService.createCard(request, targetUserId));
     }
 
     @PutMapping("/{id}/status")
